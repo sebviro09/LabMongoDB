@@ -1,6 +1,8 @@
 package labMongoDB;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -10,7 +12,15 @@ import java.net.UnknownHostException;
 
 import java.util.Set;
 
+import javax.swing.event.DocumentListener;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.plaf.ActionMapUIResource;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.Position;
+import javax.swing.text.Segment;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -620,14 +630,14 @@ public class FrameCRUD extends javax.swing.JFrame {
         botonCancelarPelicula.setVisible(true);
         
         //Read
-        BasicDBObject doc = new BasicDBObject();
+/*        BasicDBObject doc = new BasicDBObject();
         doc.put("nombre", "rocky2");
         if (doc!=null) {
         	DBCursor cursor = coleccionPeliculas.find(doc);
         	while (cursor.hasNext()) {
         		directorPelicula.setText(cursor.next().get("director").toString());
         	}
-        }        
+        } */       
         
         //Delete
         /*DBObject findDoc = new BasicDBObject("nombre", peliculaBuscar.getText());
@@ -640,7 +650,60 @@ public class FrameCRUD extends javax.swing.JFrame {
         	BasicDBObject query1 = new BasicDBObject("nombre", "rocky");
         	coleccionPeliculas.update(query1, doc);
         }    */
-
+        
+        // Película en rango de años
+        /*DBCursor cursor = coleccionPeliculas.find(new BasicDBObject("ano", new BasicDBObject("$gte", 1995).append("$lte", 2080)));
+        while (cursor.hasNext()) {
+        System.out.println(cursor.next().get("ano"));
+        }*/
+        
+        // Obtener la duración de las películas, guardarlas, sacar mínima y máxima 
+/*        ArrayList<Integer> duracion = new ArrayList<Integer>();
+        DBCursor cursor = coleccionPeliculas.find();
+        while (cursor.hasNext()) {
+        	duracion.add((Integer)cursor.next().get("duracion"));
+        }
+        System.out.println( "ArrayList Min Value: " + Collections.min(duracion));
+        System.out.println( "ArrayList Min Value: " + Collections.max(duracion));
+        
+        BasicDBObject doc = new BasicDBObject();
+        doc.put("duracion", Collections.max(duracion));
+        if (doc!=null) {
+        	DBCursor cursor2 = coleccionPeliculas.find(doc);
+        	while (cursor2.hasNext()) {
+        		nombrePelicula.setText(cursor2.next().get("nombre").toString());
+        	}
+        } */ 
+        
+        // Cantidad de películas
+/*        DBCursor cursorX = coleccionPeliculas.find();
+        int cantidad = 0;
+        while (cursorX.hasNext()) {
+        	System.out.println(cursorX.next().get("nombre"));
+        	cantidad++;
+        }
+        System.out.println(cantidad);*/
+        
+        // Duración promedio productora
+        BasicDBObject doc = new BasicDBObject();
+        doc.put("productora", "disney");
+        int duracionTotal = 0;
+        int duracionPromedio = 0;
+        int cantidad = 0;
+        if (doc!=null) {
+        	DBCursor cursor = coleccionPeliculas.find(doc);
+        	while (cursor.hasNext()) {
+        		cantidad++;
+        		duracionTotal = duracionTotal + (Integer)cursor.next().get("duracion");
+        	}
+        	System.out.println(cantidad);
+        	System.out.println(duracionTotal);
+        	if (cantidad!=0) {
+        		duracionPromedio = duracionTotal/cantidad;
+        	}
+        	System.out.println(duracionPromedio);
+        } 
+       
     }                                                   
 
     private void botonRegistrarProductoraActionPerformed(java.awt.event.ActionEvent evt) {                                                         

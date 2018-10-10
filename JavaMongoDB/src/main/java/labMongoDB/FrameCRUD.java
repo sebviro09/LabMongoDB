@@ -618,8 +618,29 @@ public class FrameCRUD extends javax.swing.JFrame {
     private void botonBuscarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {                                                    
         panelPelicula.setVisible(true);
         botonCancelarPelicula.setVisible(true);
-        DBObject findDoc = new BasicDBObject("nombre", peliculaBuscar.getText());
-		coleccionPeliculas.remove(findDoc);
+        
+        //Read
+        BasicDBObject doc = new BasicDBObject();
+        doc.put("nombre", "rocky2");
+        if (doc!=null) {
+        	DBCursor cursor = coleccionPeliculas.find(doc);
+        	while (cursor.hasNext()) {
+        		directorPelicula.setText(cursor.next().get("director").toString());
+        	}
+        }        
+        
+        //Delete
+        /*DBObject findDoc = new BasicDBObject("nombre", peliculaBuscar.getText());
+		coleccionPeliculas.remove(findDoc);*/
+        
+       // Update 
+       /* BasicDBObject doc = new BasicDBObject();
+        doc.put("$set", new BasicDBObject().append("nombre", "rocky2"));
+        if (doc!=null) {
+        	BasicDBObject query1 = new BasicDBObject("nombre", "rocky");
+        	coleccionPeliculas.update(query1, doc);
+        }    */
+
     }                                                   
 
     private void botonRegistrarProductoraActionPerformed(java.awt.event.ActionEvent evt) {                                                         

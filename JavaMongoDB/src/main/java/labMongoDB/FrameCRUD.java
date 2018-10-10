@@ -1,5 +1,7 @@
 package labMongoDB;
 
+import java.net.UnknownHostException;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,16 +10,44 @@ package labMongoDB;
 
 import java.util.Set;
 
+import javax.swing.plaf.ActionMapUIResource;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+
 /**
  *
  * @author sebvi
  */
 public class FrameCRUD extends javax.swing.JFrame {
 
+	
+	DB db;
+	DBCollection coleccionPeliculas;
+	DBCollection coleccionProductoras;
     /**
      * Creates new form FrameCRUD
      */
     public FrameCRUD() {
+		try {
+
+			MongoClient mongoClient = new MongoClient("localhost", 27017);
+
+			DB db = mongoClient.getDB("BasePelis");
+
+			coleccionPeliculas = db.getCollection("Peliculas");
+			coleccionProductoras = db.getCollection("Productoras");
+
+			} catch (UnknownHostException ex) {
+				System.out.println("Exception al conectar al server de Mongo: " + ex.getMessage());
+			}
         initComponents();
         panelPelicula.setVisible(false);
         panelNombrePelicula.setVisible(false);
@@ -25,8 +55,9 @@ public class FrameCRUD extends javax.swing.JFrame {
         panelProductora.setVisible(false);
         panelNombreProductora.setVisible(false);
         botonCancelarProductora.setVisible(false);
-
     }
+    
+	BasicDBObject dbObjectPelicula = new BasicDBObject();
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -43,31 +74,31 @@ public class FrameCRUD extends javax.swing.JFrame {
         botonEliminarPelicula = new javax.swing.JButton();
         panelPelicula = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        nombrePelicula = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        generoPelicula = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        directorPelicula = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        franquiciaPelicula = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        paisPelicula = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
+        anoPelicula = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
+        duracionPelicula = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        jTextField8 = new javax.swing.JTextField();
+        productoraPelicula = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
-        jTextField9 = new javax.swing.JTextField();
-        jTextField10 = new javax.swing.JTextField();
-        jTextField11 = new javax.swing.JTextField();
-        jTextField12 = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
+        actor1Pelicula = new javax.swing.JTextField();
+        actor2Pelicula = new javax.swing.JTextField();
+        actor3Pelicula = new javax.swing.JTextField();
+        actor4Pelicula = new javax.swing.JTextField();
+        botonGuardarPelicula = new javax.swing.JButton();
         botonCancelarPelicula = new javax.swing.JButton();
         panelNombrePelicula = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
-        jTextField13 = new javax.swing.JTextField();
+        peliculaBuscar = new javax.swing.JTextField();
         botonBuscarPelicula = new javax.swing.JButton();
         labelProductora = new javax.swing.JLabel();
         labelPeliculas = new javax.swing.JLabel();
@@ -80,16 +111,15 @@ public class FrameCRUD extends javax.swing.JFrame {
         botonBuscarProductora = new javax.swing.JButton();
         panelProductora = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
-        jTextField15 = new javax.swing.JTextField();
+        nombreProductora = new javax.swing.JTextField();
         jLabel17 = new javax.swing.JLabel();
-        jTextField17 = new javax.swing.JTextField();
+        direccionProductora = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
-        jTextField20 = new javax.swing.JTextField();
-        jButton5 = new javax.swing.JButton();
+        anoProductora = new javax.swing.JTextField();
+        botonGuardarProductora = new javax.swing.JButton();
         botonCancelarProductora = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1366, 685));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 102, 102));
@@ -137,10 +167,15 @@ public class FrameCRUD extends javax.swing.JFrame {
 
         jLabel10.setText("Actores");
 
-        jButton4.setBackground(new java.awt.Color(0, 153, 0));
-        jButton4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(255, 255, 255));
-        jButton4.setText("GUARDAR");
+        botonGuardarPelicula.setBackground(new java.awt.Color(0, 153, 0));
+        botonGuardarPelicula.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        botonGuardarPelicula.setForeground(new java.awt.Color(255, 255, 255));
+        botonGuardarPelicula.setText("GUARDAR");
+        botonGuardarPelicula.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonGuardarPeliculaActionPerformed(evt);
+            }
+        });
 
         botonCancelarPelicula.setBackground(new java.awt.Color(255, 0, 0));
         botonCancelarPelicula.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -165,8 +200,8 @@ public class FrameCRUD extends javax.swing.JFrame {
                             .addComponent(jLabel8))
                         .addGap(25, 25, 25)
                         .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
-                            .addComponent(jTextField7))
+                            .addComponent(anoPelicula, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                            .addComponent(duracionPelicula))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(panelPeliculaLayout.createSequentialGroup()
                         .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -176,11 +211,11 @@ public class FrameCRUD extends javax.swing.JFrame {
                                     .addComponent(jLabel10))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField9)
-                                    .addComponent(jTextField10)
-                                    .addComponent(jTextField11)
-                                    .addComponent(jTextField12)
-                                    .addComponent(jTextField8)))
+                                    .addComponent(actor1Pelicula)
+                                    .addComponent(actor2Pelicula)
+                                    .addComponent(actor3Pelicula)
+                                    .addComponent(actor4Pelicula)
+                                    .addComponent(productoraPelicula)))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelPeliculaLayout.createSequentialGroup()
                                 .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel5)
@@ -188,9 +223,9 @@ public class FrameCRUD extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(panelPeliculaLayout.createSequentialGroup()
-                                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(paisPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(0, 0, Short.MAX_VALUE))
-                                    .addComponent(jTextField4)))
+                                    .addComponent(franquiciaPelicula)))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelPeliculaLayout.createSequentialGroup()
                                 .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel3)
@@ -198,20 +233,20 @@ public class FrameCRUD extends javax.swing.JFrame {
                                 .addGap(30, 30, 30)
                                 .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(panelPeliculaLayout.createSequentialGroup()
-                                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(generoPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(0, 0, Short.MAX_VALUE))
-                                    .addComponent(jTextField3)))
+                                    .addComponent(directorPelicula)))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelPeliculaLayout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(nombrePelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(75, 75, 75))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelPeliculaLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(botonCancelarPelicula))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelPeliculaLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(botonGuardarPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(107, 107, 107))
         );
         panelPeliculaLayout.setVerticalGroup(
@@ -224,50 +259,50 @@ public class FrameCRUD extends javax.swing.JFrame {
                             .addGroup(panelPeliculaLayout.createSequentialGroup()
                                 .addGap(6, 6, 6)
                                 .addComponent(jLabel2))
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(nombrePelicula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(botonCancelarPelicula))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(panelPeliculaLayout.createSequentialGroup()
                         .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(generoPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(directorPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(franquiciaPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5))
                         .addGap(14, 14, 14)
                         .addComponent(jLabel6))
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(paisPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(panelPeliculaLayout.createSequentialGroup()
                         .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel7)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(anoPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(jLabel8))
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(duracionPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(productoraPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panelPeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
-                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(actor1Pelicula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(actor2Pelicula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(actor3Pelicula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(actor4Pelicula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                .addComponent(jButton4)
+                .addComponent(botonGuardarPelicula)
                 .addGap(22, 22, 22))
         );
 
@@ -287,7 +322,7 @@ public class FrameCRUD extends javax.swing.JFrame {
             .addGroup(panelNombrePeliculaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelNombrePeliculaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField13)
+                    .addComponent(peliculaBuscar)
                     .addGroup(panelNombrePeliculaLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jLabel11)
@@ -304,7 +339,7 @@ public class FrameCRUD extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(peliculaBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(botonBuscarPelicula)
                 .addContainerGap(15, Short.MAX_VALUE))
@@ -387,10 +422,15 @@ public class FrameCRUD extends javax.swing.JFrame {
 
         jLabel20.setText("Año de fundación");
 
-        jButton5.setBackground(new java.awt.Color(0, 153, 0));
-        jButton5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jButton5.setForeground(new java.awt.Color(255, 255, 255));
-        jButton5.setText("GUARDAR");
+        botonGuardarProductora.setBackground(new java.awt.Color(0, 153, 0));
+        botonGuardarProductora.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        botonGuardarProductora.setForeground(new java.awt.Color(255, 255, 255));
+        botonGuardarProductora.setText("GUARDAR");
+        botonGuardarProductora.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonGuardarProductoraActionPerformed(evt);
+            }
+        });
 
         botonCancelarProductora.setBackground(new java.awt.Color(255, 0, 0));
         botonCancelarProductora.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -417,17 +457,17 @@ public class FrameCRUD extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(panelProductoraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(panelProductoraLayout.createSequentialGroup()
-                                .addComponent(jTextField20, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(anoProductora, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 106, Short.MAX_VALUE))
-                            .addComponent(jTextField17)))
+                            .addComponent(direccionProductora)))
                     .addGroup(panelProductoraLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(nombreProductora, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(35, 35, 35)
                 .addComponent(botonCancelarProductora))
             .addGroup(panelProductoraLayout.createSequentialGroup()
                 .addGap(114, 114, 114)
-                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(botonGuardarProductora, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelProductoraLayout.setVerticalGroup(
@@ -440,18 +480,18 @@ public class FrameCRUD extends javax.swing.JFrame {
                             .addGroup(panelProductoraLayout.createSequentialGroup()
                                 .addGap(6, 6, 6)
                                 .addComponent(jLabel15))
-                            .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(nombreProductora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(botonCancelarProductora))
                 .addGap(14, 14, 14)
                 .addGroup(panelProductoraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel20)
-                    .addComponent(jTextField20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(anoProductora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelProductoraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel17)
-                    .addComponent(jTextField17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(direccionProductora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(50, 50, 50)
-                .addComponent(jButton5)
+                .addComponent(botonGuardarProductora)
                 .addContainerGap(35, Short.MAX_VALUE))
         );
 
@@ -543,6 +583,11 @@ public class FrameCRUD extends javax.swing.JFrame {
         botonEditarProductora.setVisible(false);
         botonEliminarProductora.setVisible(false);
         labelProductora.setVisible(false);
+        
+   
+        
+        //Pelicula peli = new Pelicula(nombrePelicula, generoPelicula, directorPelicula, franquiciaPelicula, paisPelicula, ano, duracionPelicula, productoraPelicula, actor)
+
         //new Consultas().setVisible(true);
     }                                                      
 
@@ -573,6 +618,8 @@ public class FrameCRUD extends javax.swing.JFrame {
     private void botonBuscarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {                                                    
         panelPelicula.setVisible(true);
         botonCancelarPelicula.setVisible(true);
+        DBObject findDoc = new BasicDBObject("nombre", peliculaBuscar.getText());
+		coleccionPeliculas.remove(findDoc);
     }                                                   
 
     private void botonRegistrarProductoraActionPerformed(java.awt.event.ActionEvent evt) {                                                         
@@ -609,6 +656,28 @@ public class FrameCRUD extends javax.swing.JFrame {
         botonEliminarPelicula.setVisible(true);        
     }                                                       
 
+    private void botonGuardarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        BasicDBObject dbObjectPelicula = new BasicDBObject();
+        dbObjectPelicula.append("nombre", nombrePelicula.getText());
+        dbObjectPelicula.append("genero", generoPelicula.getText());
+        dbObjectPelicula.append("director", directorPelicula.getText());
+        dbObjectPelicula.append("franquicia", franquiciaPelicula.getText());
+        dbObjectPelicula.append("pais", paisPelicula.getText());
+        dbObjectPelicula.append("ano", Integer.parseInt(anoPelicula.getText()));
+        dbObjectPelicula.append("duracion", Integer.parseInt(duracionPelicula.getText()));
+        dbObjectPelicula.append("productora", productoraPelicula.getText());
+        dbObjectPelicula.append("actores", actor1Pelicula.getText());
+        coleccionPeliculas.insert(dbObjectPelicula);
+    }   
+    
+    private void botonGuardarProductoraActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        BasicDBObject dbObjectProductora = new BasicDBObject();
+        dbObjectProductora.append("nombre", nombreProductora.getText());
+        dbObjectProductora.append("ano", Integer.parseInt(anoProductora.getText()));
+        dbObjectProductora.append("direccion", direccionProductora.getText());
+        coleccionProductoras.insert(dbObjectProductora);
+    }                                        
+
     /**
      * @param args the command line arguments
      */
@@ -618,7 +687,11 @@ public class FrameCRUD extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
+    	    	
         try {
+        	
+
+        	
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
@@ -633,7 +706,8 @@ public class FrameCRUD extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(FrameCRUD.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(FrameCRUD.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
+        
+	} 
         //</editor-fold>
 
         /* Create and display the form */
@@ -642,21 +716,44 @@ public class FrameCRUD extends javax.swing.JFrame {
                 new FrameCRUD().setVisible(true);
             }
         });
+        
+        
+		
+    }
+    
+    public BasicDBObject insertar(DBCollection uno, DBCollection dos) {
+		BasicDBObject dBObjectPelicula = new BasicDBObject();
+
+		dBObjectPelicula.append("nombre", nombrePelicula.getText());
+		dBObjectPelicula.append("nombre2", generoPelicula.getText());
+		
+		return dBObjectPelicula;
+		
+		
     }
 
     // Variables declaration - do not modify                     
-    private javax.swing.JButton botonBuscarPelicula;
-    private javax.swing.JButton botonBuscarProductora;
-    private javax.swing.JButton botonCancelarPelicula;
-    private javax.swing.JButton botonCancelarProductora;
-    private javax.swing.JButton botonEditarPelicula;
-    private javax.swing.JButton botonEditarProductora;
-    private javax.swing.JButton botonEliminarPelicula;
-    private javax.swing.JButton botonEliminarProductora;
-    private javax.swing.JButton botonRegistrarPelicula;
-    private javax.swing.JButton botonRegistrarProductora;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    public static javax.swing.JTextField actor1Pelicula;
+    public static javax.swing.JTextField actor2Pelicula;
+    public static javax.swing.JTextField actor3Pelicula;
+    public static javax.swing.JTextField actor4Pelicula;
+    public static javax.swing.JTextField anoPelicula;
+    public static javax.swing.JButton botonBuscarPelicula;
+    public static javax.swing.JButton botonBuscarProductora;
+    public static javax.swing.JButton botonCancelarPelicula;
+    public static javax.swing.JButton botonCancelarProductora;
+    public static javax.swing.JButton botonEditarPelicula;
+    public static javax.swing.JButton botonEditarProductora;
+    public static javax.swing.JButton botonEliminarPelicula;
+    public static javax.swing.JButton botonEliminarProductora;
+    public static javax.swing.JButton botonRegistrarPelicula;
+    public static javax.swing.JButton botonRegistrarProductora;
+    public static javax.swing.JTextField directorPelicula;
+    public static javax.swing.JTextField duracionPelicula;
+    public static javax.swing.JTextField franquiciaPelicula;
+    public static javax.swing.JTextField generoPelicula;
+    public static javax.swing.JButton botonGuardarPelicula;
+    public static javax.swing.JButton botonGuardarProductora;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -672,28 +769,19 @@ public class FrameCRUD extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField10;
-    private javax.swing.JTextField jTextField11;
-    private javax.swing.JTextField jTextField12;
-    private javax.swing.JTextField jTextField13;
-    private javax.swing.JTextField jTextField14;
-    private javax.swing.JTextField jTextField15;
-    private javax.swing.JTextField jTextField17;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField20;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
-    private javax.swing.JTextField jTextField9;
+    public static javax.swing.JTextField jTextField14;
+    public static javax.swing.JTextField nombreProductora;
+    public static javax.swing.JTextField direccionProductora;
+    public static javax.swing.JTextField anoProductora;
     private javax.swing.JLabel labelPeliculas;
     private javax.swing.JLabel labelProductora;
+    public static javax.swing.JTextField nombrePelicula;
+    public static javax.swing.JTextField paisPelicula;
     private javax.swing.JPanel panelNombrePelicula;
     private javax.swing.JPanel panelNombreProductora;
-    private javax.swing.JPanel panelPelicula;
+    public static javax.swing.JPanel panelPelicula;
     private javax.swing.JPanel panelProductora;
+    public static javax.swing.JTextField peliculaBuscar;
+    public static javax.swing.JTextField productoraPelicula;
     // End of variables declaration                   
 }

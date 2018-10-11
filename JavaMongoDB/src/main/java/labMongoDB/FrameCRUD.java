@@ -12,6 +12,7 @@ import java.util.Collections;
 
 import java.util.Set;
 
+import javax.swing.JOptionPane;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.plaf.ActionMapUIResource;
@@ -42,6 +43,12 @@ public class FrameCRUD extends javax.swing.JFrame {
 	DB db;
 	DBCollection coleccionPeliculas;
 	DBCollection coleccionProductoras;
+	boolean editar = false;
+	boolean eliminar = false;
+	
+	String nombreAntiguo, generoAntiguo, directorAntiguo, franquiciaAntigua, paisAntiguo, 
+	anoAntiguo, duracionAntigua, productoraAntigua, actorAntigua = "";
+	
     /**
      * Creates new form FrameCRUD
      */
@@ -593,12 +600,6 @@ public class FrameCRUD extends javax.swing.JFrame {
         botonEditarProductora.setVisible(false);
         botonEliminarProductora.setVisible(false);
         labelProductora.setVisible(false);
-        
-   
-        
-        //Pelicula peli = new Pelicula(nombrePelicula, generoPelicula, directorPelicula, franquiciaPelicula, paisPelicula, ano, duracionPelicula, productoraPelicula, actor)
-
-        //new Consultas().setVisible(true);
     }                                                      
 
     private void botonEditarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {                                                    
@@ -607,11 +608,19 @@ public class FrameCRUD extends javax.swing.JFrame {
         botonEliminarPelicula.setVisible(false);
         botonRegistrarProductora.setVisible(false);
         botonEliminarProductora.setVisible(false);
-        botonEditarProductora.setVisible(false); 
+        botonEditarProductora.setVisible(false);
+        editar = true;
     }                                                   
 
     private void botonEliminarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {                                                      
         panelNombrePelicula.setVisible(true);
+        botonRegistrarPelicula.setVisible(false);
+        botonEliminarPelicula.setVisible(true);
+        botonEditarPelicula.setVisible(false);
+        botonRegistrarProductora.setVisible(false);
+        botonEliminarProductora.setVisible(false);
+        botonEditarProductora.setVisible(false);
+        eliminar = true;
     }                                                     
 
     private void botonCancelarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {                                                      
@@ -623,11 +632,57 @@ public class FrameCRUD extends javax.swing.JFrame {
         botonEditarProductora.setVisible(true);
         botonEliminarProductora.setVisible(true);
         labelProductora.setVisible(true);
+        botonRegistrarPelicula.setVisible(true);
+        botonRegistrarProductora.setVisible(true);
+        editar=false;
+        eliminar=false;
+        limpiarCampos();
     }                                                     
 
     private void botonBuscarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {                                                    
         panelPelicula.setVisible(true);
         botonCancelarPelicula.setVisible(true);
+        BasicDBObject doc = new BasicDBObject();
+        doc.put("nombre", peliculaBuscar.getText());
+        if (doc!=null) {
+        	DBCursor cursor = coleccionPeliculas.find(doc);
+        	while (cursor.hasNext()) {
+        		DBObject cursor2 = cursor.next();
+        		nombrePelicula.setText(cursor2.get("nombre").toString());
+        		nombreAntiguo=cursor2.get("nombre").toString();
+        		generoPelicula.setText(cursor2.get("genero").toString());
+        		generoAntiguo=cursor2.get("genero").toString();
+        		directorPelicula.setText(cursor2.get("director").toString());
+        		directorAntiguo=cursor2.get("director").toString();
+        		franquiciaPelicula.setText(cursor2.get("franquicia").toString());
+        		franquiciaAntigua=cursor2.get("franquicia").toString();
+        		paisPelicula.setText(cursor2.get("pais").toString());
+        		paisAntiguo=cursor2.get("pais").toString();
+        		anoPelicula.setText(cursor2.get("ano").toString());
+        		anoAntiguo=cursor2.get("ano").toString();
+        		duracionPelicula.setText(cursor2.get("duracion").toString());
+        		duracionAntigua=cursor2.get("duracion").toString();
+        		productoraPelicula.setText(cursor2.get("productora").toString());
+        		productoraAntigua=cursor2.get("productora").toString();
+        		actor1Pelicula.setText(cursor2.get("actores").toString());
+        		actorAntigua=cursor2.get("actores").toString();
+        	}
+        }
+        if (eliminar) {
+    		nombrePelicula.setEditable(false);
+    		generoPelicula.setEditable(false);
+    		directorPelicula.setEditable(false);
+    		franquiciaPelicula.setEditable(false);
+    		paisPelicula.setEditable(false);
+    		anoPelicula.setEditable(false);
+    		duracionPelicula.setEditable(false);
+    		productoraPelicula.setEditable(false);
+    		actor1Pelicula.setEditable(false);
+    		actor2Pelicula.setEditable(false);
+    		actor3Pelicula.setEditable(false);
+    		actor4Pelicula.setEditable(false);
+        }
+
         
         //Read
 /*        BasicDBObject doc = new BasicDBObject();
@@ -685,7 +740,7 @@ public class FrameCRUD extends javax.swing.JFrame {
         System.out.println(cantidad);*/
         
         // Duración promedio productora
-        BasicDBObject doc = new BasicDBObject();
+/*        BasicDBObject doc = new BasicDBObject();
         doc.put("productora", "disney");
         int duracionTotal = 0;
         int duracionPromedio = 0;
@@ -702,7 +757,7 @@ public class FrameCRUD extends javax.swing.JFrame {
         		duracionPromedio = duracionTotal/cantidad;
         	}
         	System.out.println(duracionPromedio);
-        } 
+        } */
        
     }                                                   
 
@@ -737,21 +792,108 @@ public class FrameCRUD extends javax.swing.JFrame {
         botonEditarProductora.setVisible(true);
         botonEliminarProductora.setVisible(true);
         botonEditarPelicula.setVisible(true);
-        botonEliminarPelicula.setVisible(true);        
-    }                                                       
+        botonEliminarPelicula.setVisible(true);
+        botonRegistrarPelicula.setVisible(true);
+        botonRegistrarProductora.setVisible(true);
+        limpiarCampos();
+    }
+    
+    public void limpiarCampos() {
+    	nombrePelicula.setText("");
+    	generoPelicula.setText("");
+    	directorPelicula.setText("");
+    	franquiciaPelicula.setText("");
+    	paisPelicula.setText("");
+    	anoPelicula.setText("");
+    	duracionPelicula.setText("");
+    	productoraPelicula.setText("");
+    	actor1Pelicula.setText("");
+    	actor2Pelicula.setText("");
+    	actor3Pelicula.setText("");
+    	actor4Pelicula.setText("");
+    	nombreProductora.setText("");
+    	anoProductora.setText("");
+    	direccionProductora.setText("");
+    	peliculaBuscar.setText("");
+    }
 
-    private void botonGuardarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        BasicDBObject dbObjectPelicula = new BasicDBObject();
-        dbObjectPelicula.append("nombre", nombrePelicula.getText());
-        dbObjectPelicula.append("genero", generoPelicula.getText());
-        dbObjectPelicula.append("director", directorPelicula.getText());
-        dbObjectPelicula.append("franquicia", franquiciaPelicula.getText());
-        dbObjectPelicula.append("pais", paisPelicula.getText());
-        dbObjectPelicula.append("ano", Integer.parseInt(anoPelicula.getText()));
-        dbObjectPelicula.append("duracion", Integer.parseInt(duracionPelicula.getText()));
-        dbObjectPelicula.append("productora", productoraPelicula.getText());
-        dbObjectPelicula.append("actores", actor1Pelicula.getText());
-        coleccionPeliculas.insert(dbObjectPelicula);
+    private void botonGuardarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {
+    	if (editar) {
+    		BasicDBObject doc1 = new BasicDBObject();
+    		BasicDBObject doc2 = new BasicDBObject();
+    		BasicDBObject doc3 = new BasicDBObject();
+    		BasicDBObject doc4 = new BasicDBObject();	
+    		BasicDBObject doc5 = new BasicDBObject();
+    		BasicDBObject doc6 = new BasicDBObject();	
+    		BasicDBObject doc7 = new BasicDBObject();
+    		BasicDBObject doc8 = new BasicDBObject();	
+    		BasicDBObject doc9 = new BasicDBObject();
+            doc1.put("$set", new BasicDBObject().append("nombre", nombrePelicula.getText()));
+            doc2.put("$set", new BasicDBObject().append("genero", generoPelicula.getText()));            
+            doc3.put("$set", new BasicDBObject().append("director", directorPelicula.getText()));
+            doc4.put("$set", new BasicDBObject().append("franquicia", franquiciaPelicula.getText()));            
+            doc5.put("$set", new BasicDBObject().append("pais", paisPelicula.getText()));
+            doc6.put("$set", new BasicDBObject().append("ano", anoPelicula.getText()));            
+            doc7.put("$set", new BasicDBObject().append("duracion", duracionPelicula.getText()));
+            doc8.put("$set", new BasicDBObject().append("productora", productoraPelicula.getText()));
+            doc9.put("$set", new BasicDBObject().append("actores", actor1Pelicula.getText()));               
+            if (doc1!=null) {
+            	BasicDBObject queryNombre = new BasicDBObject("nombre", nombreAntiguo);
+            	coleccionPeliculas.update(queryNombre, doc1);
+            	BasicDBObject queryGenero = new BasicDBObject("genero", generoAntiguo);
+            	coleccionPeliculas.update(queryGenero, doc2);
+            	BasicDBObject queryDirector = new BasicDBObject("director", directorAntiguo);
+            	coleccionPeliculas.update(queryDirector, doc3);
+            	BasicDBObject queryFranquicia = new BasicDBObject("franquicia", franquiciaAntigua);
+            	coleccionPeliculas.update(queryFranquicia, doc4);
+            	BasicDBObject queryPais = new BasicDBObject("pais", paisAntiguo);
+            	coleccionPeliculas.update(queryPais, doc5);
+            	BasicDBObject queryAno = new BasicDBObject("ano", anoAntiguo);
+            	coleccionPeliculas.update(queryAno, doc6);
+            	BasicDBObject queryDuracion = new BasicDBObject("duracion", duracionAntigua);
+            	coleccionPeliculas.update(queryDuracion, doc7);
+            	BasicDBObject queryProductora = new BasicDBObject("productora", productoraAntigua);
+            	coleccionPeliculas.update(queryProductora, doc8);
+            	BasicDBObject queryActor = new BasicDBObject("actores", actorAntigua);
+            	coleccionPeliculas.update(queryActor, doc9);           
+            }
+            JOptionPane.showMessageDialog(null, "Película actualizada en el catálogo correctamente");
+    	}
+    	else if (eliminar) {
+    		int resp = JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar la película?", "Alerta!", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+    		if (resp==0) {
+    			DBObject findDoc = new BasicDBObject("nombre", nombrePelicula.getText());
+    			coleccionPeliculas.remove(findDoc);   			
+    		}
+    		JOptionPane.showMessageDialog(null, "Película eliminada del catálogo correctamente");
+    	}
+    	else if (eliminar==false && editar==false) {
+	        BasicDBObject dbObjectPelicula = new BasicDBObject();
+	        dbObjectPelicula.append("nombre", nombrePelicula.getText());
+	        dbObjectPelicula.append("genero", generoPelicula.getText());
+	        dbObjectPelicula.append("director", directorPelicula.getText());
+	        dbObjectPelicula.append("franquicia", franquiciaPelicula.getText());
+	        dbObjectPelicula.append("pais", paisPelicula.getText());
+	        dbObjectPelicula.append("ano", Integer.parseInt(anoPelicula.getText()));
+	        dbObjectPelicula.append("duracion", Integer.parseInt(duracionPelicula.getText()));
+	        dbObjectPelicula.append("productora", productoraPelicula.getText());
+	        dbObjectPelicula.append("actores", actor1Pelicula.getText());
+	        coleccionPeliculas.insert(dbObjectPelicula);
+	        JOptionPane.showMessageDialog(null, "Película insertada en el catálogo correctamente");
+    	}
+        editar=false;
+        eliminar=false;
+        limpiarCampos();
+        panelNombrePelicula.setVisible(false);
+        panelPelicula.setVisible(false);
+        botonEditarPelicula.setVisible(true);
+        botonEliminarPelicula.setVisible(true);
+        botonRegistrarProductora.setVisible(true);
+        botonEditarProductora.setVisible(true);
+        botonEliminarProductora.setVisible(true);
+        labelProductora.setVisible(true);
+        botonRegistrarPelicula.setVisible(true);
+        botonRegistrarProductora.setVisible(true);
     }   
     
     private void botonGuardarProductoraActionPerformed(java.awt.event.ActionEvent evt) {                                         
@@ -760,6 +902,8 @@ public class FrameCRUD extends javax.swing.JFrame {
         dbObjectProductora.append("ano", Integer.parseInt(anoProductora.getText()));
         dbObjectProductora.append("direccion", direccionProductora.getText());
         coleccionProductoras.insert(dbObjectProductora);
+        JOptionPane.showMessageDialog(null, "Productora insertada en el catálogo correctamente");
+        limpiarCampos();
     }                                        
 
     /**

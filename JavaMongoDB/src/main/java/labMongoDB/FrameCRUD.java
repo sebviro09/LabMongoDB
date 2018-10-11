@@ -47,7 +47,8 @@ public class FrameCRUD extends javax.swing.JFrame {
 	boolean eliminar = false;
 	
 	String nombreAntiguo, generoAntiguo, directorAntiguo, franquiciaAntigua, paisAntiguo, 
-	anoAntiguo, duracionAntigua, productoraAntigua, actorAntigua = "";
+	anoAntiguo, duracionAntigua, productoraAntigua, actorAntigua, 
+	nombrePrAntiguo, anoPrAntiguo, direccionAntigua = "";
 	
     /**
      * Creates new form FrameCRUD
@@ -775,15 +776,46 @@ public class FrameCRUD extends javax.swing.JFrame {
 
     private void botonEditarProductoraActionPerformed(java.awt.event.ActionEvent evt) {                                                      
         panelNombreProductora.setVisible(true);
+        botonRegistrarPelicula.setVisible(false);
+        botonEditarPelicula.setVisible(false);
+        botonEliminarPelicula.setVisible(false);
+        botonEliminarProductora.setVisible(false);
+        botonRegistrarProductora.setVisible(false);
+        editar=true;
     }                                                     
 
     private void botonEliminarProductoraActionPerformed(java.awt.event.ActionEvent evt) {                                                        
         panelNombreProductora.setVisible(true);
+        botonRegistrarPelicula.setVisible(false);
+        botonEditarPelicula.setVisible(false);
+        botonEliminarPelicula.setVisible(false);
+        botonEditarProductora.setVisible(false);
+        botonRegistrarProductora.setVisible(false);
+        eliminar=true;
     }                                                       
 
     private void botonBuscarProductoraActionPerformed(java.awt.event.ActionEvent evt) {                                                      
         panelProductora.setVisible(true);
         botonCancelarProductora.setVisible(true);
+        BasicDBObject doc = new BasicDBObject();
+        doc.put("nombre", jTextField14.getText());
+        if (doc!=null) {
+        	DBCursor cursor = coleccionProductoras.find(doc);
+        	while (cursor.hasNext()) {
+        		DBObject cursor2 = cursor.next();
+        		nombreProductora.setText(cursor2.get("nombre").toString());
+        		nombrePrAntiguo=cursor2.get("nombre").toString();
+        		anoProductora.setText(cursor2.get("ano").toString());
+        		anoPrAntiguo=cursor2.get("ano").toString();
+        		direccionProductora.setText(cursor2.get("direccion").toString());
+        		direccionAntigua=cursor2.get("direccion").toString();
+        	}
+        }
+        if (eliminar) {
+    		nombreProductora.setEditable(false);
+    		anoProductora.setEditable(false);
+    		direccionProductora.setEditable(false);
+        }
     }                                                     
 
     private void botonCancelarProductoraActionPerformed(java.awt.event.ActionEvent evt) {                                                        
@@ -815,6 +847,7 @@ public class FrameCRUD extends javax.swing.JFrame {
     	anoProductora.setText("");
     	direccionProductora.setText("");
     	peliculaBuscar.setText("");
+    	jTextField14.setText("");
     }
 
     private void botonGuardarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {
@@ -896,14 +929,55 @@ public class FrameCRUD extends javax.swing.JFrame {
         botonRegistrarProductora.setVisible(true);
     }   
     
-    private void botonGuardarProductoraActionPerformed(java.awt.event.ActionEvent evt) {                                         
+    private void botonGuardarProductoraActionPerformed(java.awt.event.ActionEvent evt) {
+    	if (editar) {
+    		BasicDBObject doc1 = new BasicDBObject();
+    		BasicDBObject doc2 = new BasicDBObject();
+    		BasicDBObject doc3 = new BasicDBObject();
+            doc1.put("$set", new BasicDBObject().append("nombre", nombreProductora.getText()));
+            doc2.put("$set", new BasicDBObject().append("ano", anoProductora.getText()));            
+            doc3.put("$set", new BasicDBObject().append("direcccion", direccionProductora.getText()));           
+            if (doc1!=null) {
+            	BasicDBObject queryNombre = new BasicDBObject("nombre", nombrePrAntiguo);
+            	coleccionProductoras.update(queryNombre, doc1);
+            	BasicDBObject queryAno = new BasicDBObject("ano", anoPrAntiguo);
+            	coleccionProductoras.update(queryAno, doc2);
+            	BasicDBObject queryDireccion = new BasicDBObject("direccion", direccionAntigua);
+            	coleccionPeliculas.update(queryDireccion, doc3);         
+            }
+            JOptionPane.showMessageDialog(null, "Productora actualizada en el catálogo correctamente");
+    	}
+    	else if (eliminar) {
+    		int resp = JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar la productora?", "Alerta!", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+    		if (resp==0) {
+    			DBObject findDoc = new BasicDBObject("nombre", nombreProductora.getText());
+    			coleccionProductoras.remove(findDoc);   			
+    		}
+    		JOptionPane.showMessageDialog(null, "Productora eliminada del catálogo correctamente");
+    	}
+    	else if (eliminar==false && editar==false) {
         BasicDBObject dbObjectProductora = new BasicDBObject();
         dbObjectProductora.append("nombre", nombreProductora.getText());
         dbObjectProductora.append("ano", Integer.parseInt(anoProductora.getText()));
         dbObjectProductora.append("direccion", direccionProductora.getText());
         coleccionProductoras.insert(dbObjectProductora);
         JOptionPane.showMessageDialog(null, "Productora insertada en el catálogo correctamente");
+    	}
+        editar=false;
+        eliminar=false;
         limpiarCampos();
+        panelNombrePelicula.setVisible(false);
+        panelPelicula.setVisible(false);
+        panelNombreProductora.setVisible(false);
+        panelProductora.setVisible(false);
+        botonEditarPelicula.setVisible(true);
+        botonEliminarPelicula.setVisible(true);
+        botonRegistrarProductora.setVisible(true);
+        botonEditarProductora.setVisible(true);
+        botonEliminarProductora.setVisible(true);
+        labelProductora.setVisible(true);
+        botonRegistrarPelicula.setVisible(true);
+        botonRegistrarProductora.setVisible(true);
     }                                        
 
     /**

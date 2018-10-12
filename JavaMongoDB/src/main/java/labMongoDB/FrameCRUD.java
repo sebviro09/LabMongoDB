@@ -67,6 +67,8 @@ public class FrameCRUD extends javax.swing.JFrame {
 				System.out.println("Exception al conectar al server de Mongo: " + ex.getMessage());
 			}
         initComponents();
+        FrameConsultas frame = new FrameConsultas();
+        frame.setVisible(true);
         panelPelicula.setVisible(false);
         panelNombrePelicula.setVisible(false);
         botonCancelarPelicula.setVisible(false);
@@ -118,6 +120,7 @@ public class FrameCRUD extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         peliculaBuscar = new javax.swing.JTextField();
         botonBuscarPelicula = new javax.swing.JButton();
+        botonCancelarBuscarPeli = new javax.swing.JButton();
         labelProductora = new javax.swing.JLabel();
         labelPeliculas = new javax.swing.JLabel();
         botonRegistrarProductora = new javax.swing.JButton();
@@ -330,8 +333,15 @@ public class FrameCRUD extends javax.swing.JFrame {
         botonBuscarPelicula.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonBuscarPeliculaActionPerformed(evt);
-            }
+            }             
         });
+        
+        botonCancelarBuscarPeli.setText("CANCELAR");
+        botonCancelarBuscarPeli.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonBuscarPeliculaActionPerformed(evt);
+            }             
+        });        
 
         javax.swing.GroupLayout panelNombrePeliculaLayout = new javax.swing.GroupLayout(panelNombrePelicula);
         panelNombrePelicula.setLayout(panelNombrePeliculaLayout);
@@ -684,81 +694,7 @@ public class FrameCRUD extends javax.swing.JFrame {
     		actor4Pelicula.setEditable(false);
         }
 
-        
-        //Read
-/*        BasicDBObject doc = new BasicDBObject();
-        doc.put("nombre", "rocky2");
-        if (doc!=null) {
-        	DBCursor cursor = coleccionPeliculas.find(doc);
-        	while (cursor.hasNext()) {
-        		directorPelicula.setText(cursor.next().get("director").toString());
-        	}
-        } */       
-        
-        //Delete
-        /*DBObject findDoc = new BasicDBObject("nombre", peliculaBuscar.getText());
-		coleccionPeliculas.remove(findDoc);*/
-        
-       // Update 
-       /* BasicDBObject doc = new BasicDBObject();
-        doc.put("$set", new BasicDBObject().append("nombre", "rocky2"));
-        if (doc!=null) {
-        	BasicDBObject query1 = new BasicDBObject("nombre", "rocky");
-        	coleccionPeliculas.update(query1, doc);
-        }    */
-        
-        // Película en rango de años
-        /*DBCursor cursor = coleccionPeliculas.find(new BasicDBObject("ano", new BasicDBObject("$gte", 1995).append("$lte", 2080)));
-        while (cursor.hasNext()) {
-        System.out.println(cursor.next().get("ano"));
-        }*/
-        
-        // Obtener la duración de las películas, guardarlas, sacar mínima y máxima 
-/*        ArrayList<Integer> duracion = new ArrayList<Integer>();
-        DBCursor cursor = coleccionPeliculas.find();
-        while (cursor.hasNext()) {
-        	duracion.add((Integer)cursor.next().get("duracion"));
-        }
-        System.out.println( "ArrayList Min Value: " + Collections.min(duracion));
-        System.out.println( "ArrayList Min Value: " + Collections.max(duracion));
-        
-        BasicDBObject doc = new BasicDBObject();
-        doc.put("duracion", Collections.max(duracion));
-        if (doc!=null) {
-        	DBCursor cursor2 = coleccionPeliculas.find(doc);
-        	while (cursor2.hasNext()) {
-        		nombrePelicula.setText(cursor2.next().get("nombre").toString());
-        	}
-        } */ 
-        
-        // Cantidad de películas
-/*        DBCursor cursorX = coleccionPeliculas.find();
-        int cantidad = 0;
-        while (cursorX.hasNext()) {
-        	System.out.println(cursorX.next().get("nombre"));
-        	cantidad++;
-        }
-        System.out.println(cantidad);*/
-        
-        // Duración promedio productora
-/*        BasicDBObject doc = new BasicDBObject();
-        doc.put("productora", "disney");
-        int duracionTotal = 0;
-        int duracionPromedio = 0;
-        int cantidad = 0;
-        if (doc!=null) {
-        	DBCursor cursor = coleccionPeliculas.find(doc);
-        	while (cursor.hasNext()) {
-        		cantidad++;
-        		duracionTotal = duracionTotal + (Integer)cursor.next().get("duracion");
-        	}
-        	System.out.println(cantidad);
-        	System.out.println(duracionTotal);
-        	if (cantidad!=0) {
-        		duracionPromedio = duracionTotal/cantidad;
-        	}
-        	System.out.println(duracionPromedio);
-        } */
+       
        
     }                                                   
 
@@ -1041,6 +977,7 @@ public class FrameCRUD extends javax.swing.JFrame {
     public static javax.swing.JTextField actor4Pelicula;
     public static javax.swing.JTextField anoPelicula;
     public static javax.swing.JButton botonBuscarPelicula;
+    public static javax.swing.JButton botonCancelarBuscarPeli;
     public static javax.swing.JButton botonBuscarProductora;
     public static javax.swing.JButton botonCancelarPelicula;
     public static javax.swing.JButton botonCancelarProductora;
